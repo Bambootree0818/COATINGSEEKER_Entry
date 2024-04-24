@@ -7,7 +7,7 @@ C++で実装を行っています。
 メニューのリストは任意のものをクリックすると紐づけられたイベントが実行されます。
 
 # gitIgnoreしているモデル
-gitの制約上プッシュできていないモデルがいかにあります。これを\Content\MS06R\に配置してください。
+gitの制約上プッシュできていないモデルが以下にあります。これを\Content\MS06R\に配置してください。
 https://drive.google.com/drive/folders/1gyL7OW-YYW9NaJ8yMdru5-ZMU6Ae6Qz1?usp=sharing
 
 # デモ動画
