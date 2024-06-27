@@ -19,6 +19,24 @@ class COATINGSEEKER_ENTRY_API UPaintWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+
+	//--------
+	//トグルライトボタン
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* UserLight1Button;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* UserLight2Button;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* UserLight3Button;
+
+	//ゲーム終了ボタン
+	UPROPERTY(meta = (BindWidget))
+	class UButton* QuitButton;
+
 protected:
 	//NativecConstruct
 	void NativeConstruct() override;
@@ -98,6 +116,19 @@ private:
 	UFUNCTION()
 	void OnButtonParts6Clicked();
 
+	//-----
+	//トグルボタン関数
+	UFUNCTION()
+	void OnUserLight1ButtonClicked();
+
+	UFUNCTION()
+	void OnUserLight2ButtonClicked();
+
+	UFUNCTION()
+	void OnUserLight3ButtonClicked();
+
+	void ToggleLight(int LightIndex);
+
 //-----------
 	//塗料用バーティカルボックス
 	UPROPERTY(meta = (BindWidget))
@@ -121,6 +152,10 @@ private:
 
 	UPROPERTY()
 	TMap<UButton*, FMaterialProperties> ButtonToMaterialMap;
+
+//ゲーム終了関数
+	UFUNCTION()
+	void OnQuitButtonClicked();
 	
 };
 

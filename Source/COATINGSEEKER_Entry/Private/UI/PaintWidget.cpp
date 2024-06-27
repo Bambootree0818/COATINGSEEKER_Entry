@@ -16,6 +16,14 @@
 #include "PaintPreview.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "UI/PaintMenuHUD.h"
+#include "Engine/Texture2D.h"
+#include "Brushes/SlateImageBrush.h"
+#include "Engine/StreamableManager.h"
+#include "Engine/AssetManager.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Components/Image.h"
+#include <ToggleLight.h>
+#include "Kismet/KismetSystemLibrary.h"
 
 class UVerticalBox;
 
@@ -48,6 +56,27 @@ void UPaintWidget::NativeConstruct()
 	HiddenButtons.Add(Parts4);
 	HiddenButtons.Add(Parts5);
 	HiddenButtons.Add(Parts6);
+
+	if (UserLight1Button)
+	{
+		UserLight1Button->OnClicked.AddDynamic(this, &UPaintWidget::OnUserLight1ButtonClicked);
+	}
+
+	if (UserLight2Button)
+	{
+		UserLight2Button->OnClicked.AddDynamic(this, &UPaintWidget::OnUserLight2ButtonClicked);
+	}
+
+	if (UserLight3Button)
+	{
+		UserLight3Button->OnClicked.AddDynamic(this, &UPaintWidget::OnUserLight3ButtonClicked);
+	}
+
+	//ゲーム終了ボタンのバインド
+	if (QuitButton)
+	{
+		QuitButton->OnClicked.AddDynamic(this, &UPaintWidget::OnQuitButtonClicked);
+	}
 
 }
 
@@ -169,6 +198,21 @@ void UPaintWidget::CreateButtonsForMaterials() {
 				NewButton->AddChild(ButtonLabel);
 			}
 
+			// 画像の取得と設定
+			FString ImagePath = FString::Printf(TEXT("/Game/UI/MaterialImage/%s"), *Material.Name);
+			//UKismetSystemLibrary::PrintString(this, ImagePath, true, true, FColor::Cyan, 20.f, TEXT("None"));
+			UTexture2D* ButtonImage = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, *ImagePath));
+			if (ButtonImage) {
+				//UKismetSystemLibrary::PrintString(this, ImagePath, true, true, FColor::Cyan, 20.f, TEXT("None"));
+				FSlateBrush Brush;
+				Brush.SetResourceObject(ButtonImage);
+				Brush.TintColor = FSlateColor(FLinearColor::White);
+
+				// 通常時の画像を設定
+				NewButton->WidgetStyle.Normal.SetResourceObject(ButtonImage);
+				NewButton->WidgetStyle.Normal.TintColor = FSlateColor(FLinearColor::White);
+			}
+
 			//カスタムボタンごとにマテリアルを持たせる
 			NewButton->MaterialProperties = Material;
 			
@@ -183,7 +227,7 @@ void UPaintWidget::CreateButtonsForMaterials() {
 
 	}
 
-	//UKismetSystemLibrary::PrintString(this, "generate button", true, true, FColor::Cyan, 10.f, TEXT("None"));
+	
 }
 
 
@@ -397,4 +441,41 @@ void UPaintWidget::OnButtonParts5Clicked()
 void UPaintWidget::OnButtonParts6Clicked()
 {
 	MaterialSlot = 7;
+}
+
+
+void UPaintWidget::OnUserLight1ButtonClicked()
+{
+	ToggleLight(1);
+}
+
+void UPaintWidget::OnUserLight2ButtonClicked()
+{
+	ToggleLight(2);
+}
+
+void UPaintWidget::OnUserLight3ButtonClicked()
+{
+	ToggleLight(3);
+}
+
+void UPaintWidget::ToggleLight(int LightIndex)
+{
+	// Find all instances of AMyLightActor in the world
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AToggleLight::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		AToggleLight* LightActor = Cast<AToggleLight>(Actor);
+		if (LightActor)
+		{
+			LightActor->ToggleLight(LightIndex);
+		}
+	}
+}
+
+void UPaintWidget::OnQuitButtonClicked()
+{
+	UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, true);
 }

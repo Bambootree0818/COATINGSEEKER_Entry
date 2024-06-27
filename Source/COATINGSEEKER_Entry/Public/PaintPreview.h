@@ -31,6 +31,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	void Look(const FInputActionValue& Value);
+	void Zoom(const FInputActionValue& Value);
 
 public:	
 
@@ -54,5 +55,9 @@ private:
 	//ルックインプットアクション
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputAction* LookAction;
+
+	//ズームインプットアクション
+	UPROPERTY(EditAnywhere, Category = Input)
+	class UInputAction* ZoomAction;
 
 };

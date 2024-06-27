@@ -64,6 +64,7 @@ APaintPreview::APaintPreview()
 
 
 	LookAction = LoadObject<UInputAction>(nullptr, TEXT("/Game/Input/Action/IA_Look"));
+	ZoomAction = LoadObject<UInputAction>(nullptr, TEXT("/Game/Input/Action/IA_Zoom"));
 
 }
 
@@ -92,6 +93,7 @@ void APaintPreview::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APaintPreview::Look);
+		EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &APaintPreview::Zoom);
 	}
 
 }
@@ -115,5 +117,14 @@ void APaintPreview::Look(const FInputActionValue& Value) {
 		// PlayerController‚ÌŠp“x‚ðÝ’è‚·‚é
 		UGameplayStatics::GetPlayerController(this, 0)->SetControlRotation(FRotator(LimitPitchAngle, controlRotate.Yaw, 0.0f));
 	}
+}
+
+void APaintPreview::Zoom(const FInputActionValue& Value)
+{
+	const float ZoomAmount = Value.Get<float>();
+	const float MinArmLength = 35.0f;
+	const float MaxArmLength = 90.0f;
+
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength - ZoomAmount * 2.5, MinArmLength, MaxArmLength);
 }
 
